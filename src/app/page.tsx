@@ -603,7 +603,7 @@ const AppContent: React.FC = () => {
 
     return (
       <div className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}>
-        <div className={`max-w-[85%] sm:max-w-md px-4 py-2 rounded-lg ${
+        <div className={`max-w-[90%] sm:max-w-[85%] md:max-w-md px-3 sm:px-4 py-2 rounded-lg ${
           message.type === 'user'
             ? 'bg-indigo-500 text-white'
             : message.type === 'assistant'
@@ -611,30 +611,30 @@ const AppContent: React.FC = () => {
             : 'bg-blue-50 text-blue-800 text-center mx-auto'
         }`}>
           {message.type === 'assistant' && message.weatherData && (
-            <div className="assistant-card mb-3 p-3 bg-blue-50 border border-blue-200">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-sm text-blue-700">
-                  <span className="mr-1 text-xl">{getWeatherIcon(message.weatherData.condition)}</span>
+            <div className="assistant-card mb-3 p-2 sm:p-3 bg-blue-50 border border-blue-200">
+              <div className="flex items-center justify-between flex-wrap sm:flex-nowrap gap-2">
+                <div className="flex items-center gap-2 text-xs sm:text-sm text-blue-700">
+                  <span className="text-lg sm:text-xl">{getWeatherIcon(message.weatherData.condition)}</span>
                   <div className="font-semibold">{message.weatherData.city}</div>
                 </div>
-                <div className="text-2xl font-bold text-indigo-700">{Math.round(message.weatherData.temp)}°C</div>
+                <div className="text-xl sm:text-2xl font-bold text-indigo-700">{Math.round(message.weatherData.temp)}°C</div>
               </div>
-              <div className="mt-2 flex items-center gap-2">
-                <span className="assistant-pill bg-yellow-100 text-yellow-800 capitalize">{message.weatherData.description}</span>
-                <span className="assistant-pill bg-indigo-100 text-indigo-800">{t('feels')} {Math.round(message.weatherData.feelsLike)}°C</span>
+              <div className="mt-2 flex items-center gap-1.5 sm:gap-2 flex-wrap">
+                <span className="assistant-pill bg-yellow-100 text-yellow-800 capitalize text-xs sm:text-sm">{message.weatherData.description}</span>
+                <span className="assistant-pill bg-indigo-100 text-indigo-800 text-xs sm:text-sm">{t('feels')} {Math.round(message.weatherData.feelsLike)}°C</span>
               </div>
-              <div className="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
-                <div className="assistant-stat bg-white/60 dark:bg-white/5 p-2">
-                  <div className="text-gray-600">{t('humidity')}</div>
-                  <div className="font-semibold">{message.weatherData.humidity}%</div>
+              <div className="mt-3 grid grid-cols-3 gap-1.5 sm:gap-2 text-xs">
+                <div className="assistant-stat bg-white/60 dark:bg-white/5 p-1.5 sm:p-2">
+                  <div className="text-gray-600 text-[10px] sm:text-xs">{t('humidity')}</div>
+                  <div className="font-semibold text-xs sm:text-sm">{message.weatherData.humidity}%</div>
                 </div>
-                <div className="assistant-stat bg-white/60 dark:bg-white/5 p-2">
-                  <div className="text-gray-600">{t('windSpeed')}</div>
-                  <div className="font-semibold">{message.weatherData.windSpeed} m/s</div>
+                <div className="assistant-stat bg-white/60 dark:bg-white/5 p-1.5 sm:p-2">
+                  <div className="text-gray-600 text-[10px] sm:text-xs">{t('windSpeed')}</div>
+                  <div className="font-semibold text-xs sm:text-sm">{message.weatherData.windSpeed} m/s</div>
                 </div>
-                <div className="assistant-stat bg-white/60 dark:bg-white/5 p-2">
-                  <div className="text-gray-600">{t('visibility')}</div>
-                  <div className="font-semibold">{message.weatherData.visibilityKm != null ? `${message.weatherData.visibilityKm}km` : '—'}</div>
+                <div className="assistant-stat bg-white/60 dark:bg-white/5 p-1.5 sm:p-2">
+                  <div className="text-gray-600 text-[10px] sm:text-xs">{t('visibility')}</div>
+                  <div className="font-semibold text-xs sm:text-sm">{message.weatherData.visibilityKm != null ? `${message.weatherData.visibilityKm}km` : '—'}</div>
                 </div>
               </div>
             </div>
@@ -721,39 +721,66 @@ const AppContent: React.FC = () => {
       />
 
       {/* Main App Container */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col lg:ml-0">
       {/* Header */}
-      <header className={`app-header sticky top-0 z-50 bg-white/90 dark:bg-[#0b1220]/80 backdrop-blur-md backdrop-saturate-150 border-b border-gray-200/70 dark:border-[#243044]/80 shadow-sm ${compactHeader ? 'p-2' : 'p-4'}`}>
-  <div className={`${compactHeader ? 'max-w-2xl' : 'max-w-3xl'} mx-auto flex flex-row justify-between items-center ${compactHeader ? 'gap-2 flex-nowrap' : 'gap-3 flex-wrap'}`}>
-          <div className="text-left">
-            <h1 className={`${compactHeader ? 'text-xl' : 'text-2xl'} font-bold text-indigo-700 dark:text-indigo-300`}>
-              <span className="text-indigo-400 dark:text-indigo-400">AeroSense</span>  🌤️
-            </h1>
-            {!compactHeader && (
-              <p className="text-gray-500 text-sm">{t('headerSubtitle')}</p>
-            )}
+      <header className={`app-header sticky top-0 z-50 bg-white/90 dark:bg-[#0b1220]/80 backdrop-blur-md backdrop-saturate-150 border-b border-gray-200/70 dark:border-[#243044]/80 shadow-sm ${compactHeader ? 'py-1.5 px-2' : 'py-2 px-3 sm:py-3 sm:px-4'}`}>
+  <div className={`${compactHeader ? 'max-w-2xl' : 'max-w-3xl'} mx-auto`}>
+          {/* Title Row */}
+          <div className="flex justify-between items-center mb-1 sm:mb-2 md:mb-0">
+            <div className="text-left">
+              <h1 className={`${compactHeader ? 'text-base sm:text-lg' : 'text-lg sm:text-xl md:text-2xl'} font-bold text-indigo-700 dark:text-indigo-300`}>
+                <span className="text-indigo-400 dark:text-indigo-400">AeroSense</span>  🌤️
+              </h1>
+              {!compactHeader && (
+                <p className="text-gray-500 text-[10px] sm:text-xs md:text-sm hidden sm:block">{t('headerSubtitle')}</p>
+              )}
+            </div>
+            {/* Mobile: Dark mode and Clear chat buttons */}
+            <div className="flex md:hidden items-center gap-1.5 sm:gap-2">
+              <button
+                type="button"
+                onClick={toggleDarkMode}
+                className="p-1.5 sm:p-2 rounded-lg border border-gray-300 text-gray-700 bg-white/70 shadow-sm hover:bg-white dark:border-gray-600 dark:text-gray-200 dark:bg-white/10 dark:hover:bg-white/15 transition"
+                title={darkMode ? t('switchToLight') : t('switchToDark')}
+                aria-pressed={darkMode}
+              >
+                <span aria-hidden className="text-sm sm:text-lg">{darkMode ? '☀️' : '🌙'}</span>
+              </button>
+              <button
+                onClick={clearChat}
+                className="p-1.5 sm:p-2 rounded-lg text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-white text-xs sm:text-sm"
+                title={t('clearChat')}
+              >
+                <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </button>
+            </div>
           </div>
-          <div className={`flex items-center ${compactHeader ? 'gap-2 md:gap-2 flex-nowrap' : 'gap-2 md:gap-3 flex-wrap md:flex-nowrap'}`}>
+
+          {/* Controls Row */}
+          <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 md:gap-3">
             {/* City Input */}
-            <div className="flex items-center gap-2">
-              <label htmlFor="location" className="text-gray-700 dark:text-gray-200 font-medium text-sm">{t('cityLabel')}</label>
+            <div className="flex items-center gap-1 sm:gap-1.5 flex-shrink-0">
+              <label htmlFor="location" className="text-gray-700 dark:text-gray-200 font-medium text-[10px] sm:text-xs md:text-sm whitespace-nowrap">{t('cityLabel')}</label>
               <input
                 id="location"
                 type="text"
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
-                className={`app-input p-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 text-sm ${compactHeader ? 'w-20 sm:w-24 md:w-28' : 'w-20 sm:w-28 md:w-32'}`}
+                className={`app-input p-1.5 sm:p-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 text-sm ${compactHeader ? 'w-16 sm:w-20' : 'w-20 sm:w-24 md:w-32'}`}
                 placeholder={t('cityPlaceholder')}
                 disabled={loading}
               />
             </div>
-            <div className="flex items-center gap-2">
-              <label htmlFor="language" className="text-gray-700 dark:text-gray-200 font-medium text-sm">{t('languageLabel')}</label>
+            {/* Language Select */}
+            <div className="flex items-center gap-1 sm:gap-1.5 flex-shrink-0">
+              <label htmlFor="language" className="text-gray-700 dark:text-gray-200 font-medium text-[10px] sm:text-xs md:text-sm whitespace-nowrap">{t('languageLabel')}</label>
               <select
                 id="language"
                 value={language}
                 onChange={(e) => setLanguage(e.target.value)}
-                className={`app-select p-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 text-sm ${compactHeader ? 'max-w-[7.5rem]' : ''}`}
+                className={`app-select p-1.5 sm:p-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 text-sm ${compactHeader ? 'w-20 sm:w-24' : 'w-24 sm:w-28 md:w-32'}`}
                 disabled={loading}
               >
                 {languageOptions.map(opt => (
@@ -763,34 +790,36 @@ const AppContent: React.FC = () => {
                 ))}
               </select>
             </div>
-            {/* Dark mode toggle */}
-            <button
-              type="button"
-              onClick={toggleDarkMode}
-              className={`px-3 py-2 rounded-lg border border-gray-300 text-gray-700 bg-white/70 shadow-sm hover:bg-white dark:border-gray-600 dark:text-gray-200 dark:bg-white/10 dark:hover:bg-white/15 transition ${compactHeader ? 'text-sm' : ''}`}
-              title={darkMode ? t('switchToLight') : t('switchToDark')}
-              aria-pressed={darkMode}
-            >
-              <span className="inline-flex items-center gap-2">
-                <span aria-hidden>{darkMode ? '☀️' : '🌙'}</span>
-                <span>{darkMode ? t('light') : t('dark')}</span>
-              </span>
-            </button>
-            <button
-              onClick={clearChat}
-              className={`px-3 py-2 rounded-lg text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-white text-sm whitespace-nowrap ${compactHeader ? 'px-2' : ''}`}
-            >
-              {t('clearChat')}
-            </button>
+            {/* Desktop: Dark mode and Clear chat buttons */}
+            <div className="hidden md:flex items-center gap-2 ml-auto">
+              <button
+                type="button"
+                onClick={toggleDarkMode}
+                className={`px-3 py-2 rounded-lg border border-gray-300 text-gray-700 bg-white/70 shadow-sm hover:bg-white dark:border-gray-600 dark:text-gray-200 dark:bg-white/10 dark:hover:bg-white/15 transition ${compactHeader ? 'text-sm' : ''}`}
+                title={darkMode ? t('switchToLight') : t('switchToDark')}
+                aria-pressed={darkMode}
+              >
+                <span className="inline-flex items-center gap-2">
+                  <span aria-hidden>{darkMode ? '☀️' : '🌙'}</span>
+                  <span className="hidden lg:inline">{darkMode ? t('light') : t('dark')}</span>
+                </span>
+              </button>
+              <button
+                onClick={clearChat}
+                className={`px-3 py-2 rounded-lg text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-white text-sm whitespace-nowrap ${compactHeader ? 'px-2' : ''}`}
+              >
+                {t('clearChat')}
+              </button>
+            </div>
           </div>
         </div>
       </header>
 
       {/* Chat Messages Container */}
-      <main className="flex-1 max-w-4xl mx-auto w-full p-4 pb-40 flex flex-col">
+      <main className="flex-1 max-w-4xl mx-auto w-full p-2 sm:p-4 pb-40 flex flex-col">
         <div 
           ref={chatContainerRef}
-          className="flex-1 bg-white rounded-lg shadow-lg p-3 sm:p-4 mb-4 pb-28"
+          className="flex-1 bg-white dark:bg-transparent rounded-lg shadow-lg lg:shadow-sm p-2 sm:p-3 md:p-4 mb-4 pb-28"
         >
           <div className="space-y-4">
             {messages.map((message) => (
@@ -819,15 +848,15 @@ const AppContent: React.FC = () => {
 
         {/* Message Input Form*/}
         <div className="fixed bottom-0 left-0 right-0 z-40">
-          <div className="max-w-4xl mx-auto w-full px-4 pt-4 pb-0">
-            <form onSubmit={handleSendMessage} className="bg-white/90 dark:bg-[#0b1220]/80 backdrop-blur-md backdrop-saturate-150 border-t border-gray-200/70 dark:border-[#243044]/80 rounded-t-lg shadow-sm p-3 sm:p-4">
-              <div className="flex flex-wrap gap-3 items-stretch">
+          <div className="max-w-4xl mx-auto w-full px-1.5 sm:px-2 md:px-4 pt-1.5 sm:pt-2 md:pt-4 pb-0">
+            <form onSubmit={handleSendMessage} className="bg-white/90 dark:bg-[#0b1220]/80 backdrop-blur-md backdrop-saturate-150 border-t border-gray-200/70 dark:border-[#243044]/80 rounded-t-lg shadow-sm p-1.5 sm:p-2 md:p-3 lg:p-4">
+              <div className="flex gap-1 sm:gap-2 items-stretch">
                 <input
                   type="text"
                   value={userInput}
                   onChange={(e) => setUserInput(e.target.value)}
                   placeholder={isListening ? t('listening') : t('inputPlaceholder')}
-                  className={`app-input min-w-0 flex-1 p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 ${
+                  className={`app-input min-w-0 flex-1 p-2 sm:p-2.5 md:p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 text-xs sm:text-sm md:text-base ${
                     isListening ? 'bg-indigo-50 border-indigo-500' : ''
                   }`}
                   disabled={loading}
@@ -838,14 +867,14 @@ const AppContent: React.FC = () => {
                   onClick={startListening}
                   disabled={!mounted || loading || !isSupported}
                   aria-hidden={!mounted || !isSupported}
-                  className={`p-3 rounded-lg transition duration-150 ease-in-out shadow-md ${
+                  className={`p-1.5 sm:p-2 md:p-2.5 lg:p-3 rounded-lg transition duration-150 ease-in-out shadow-md flex-shrink-0 ${
                     mounted && isSupported
                       ? (isListening ? 'bg-red-500 text-white animate-pulse' : 'bg-indigo-500 hover:bg-indigo-600 text-white')
                       : 'bg-transparent text-transparent pointer-events-none'
                   } ${(!mounted || loading || !isSupported) ? 'disabled:bg-gray-400' : ''}`}
                   title={mounted && isSupported ? (isListening ? t('stopVoice') : t('startVoice')) : ''}
                 >
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                  <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M10 8c1.1 0 2-.9 2-2V3a2 2 0 10-4 0v3c0 1.1.9 2 2 2zM10 18c3.31 0 6-2.69 6-6h-2c0 2.21-1.79 4-4 4s-4-1.79-4-4H4c0 3.31 2.69 6 6 6zM15 9H5a1 1 0 000 2h10a1 1 0 000-2z" />
                   </svg>
                 </button>
@@ -853,13 +882,13 @@ const AppContent: React.FC = () => {
                 <button
                   type="submit"
                   disabled={loading || !userInput.trim() || !location.trim()}
-                  className="px-6 rounded-lg bg-indigo-700 hover:bg-indigo-800 text-white font-semibold shadow-md transition duration-150 disabled:bg-gray-400"
+                  className="px-3 sm:px-4 md:px-6 py-1.5 sm:py-2 md:py-2.5 lg:py-3 rounded-lg bg-indigo-700 hover:bg-indigo-800 text-white font-semibold shadow-md transition duration-150 disabled:bg-gray-400 flex-shrink-0 text-xs sm:text-sm md:text-base"
                 >
                   {loading ? '...' : t('send')}
                 </button>
               </div>
               
-              <div className="mt-2 text-xs text-gray-500 text-center">
+              <div className="mt-1 sm:mt-1.5 md:mt-2 text-[9px] sm:text-[10px] md:text-xs text-gray-500 text-center">
                 {t('enhancedBy')}
               </div>
             </form>
@@ -872,7 +901,7 @@ const AppContent: React.FC = () => {
         <button
           type="button"
           onClick={scrollToBottom}
-          className="fixed bottom-32 right-4 px-3 py-2 rounded-full shadow-lg bg-indigo-600 text-white hover:bg-indigo-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500"
+          className="fixed bottom-28 sm:bottom-32 right-2 sm:right-4 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-full shadow-lg bg-indigo-600 text-white hover:bg-indigo-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-500 text-xs sm:text-sm"
           aria-label={t('latest')}
         >
           {'↓ '}{t('latest')}

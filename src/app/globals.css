@@ -577,15 +577,245 @@ button[aria-label="Scroll to latest message"] {
   .app-input,
   .app-select {
     font-size: 16px; /* Prevents zoom on iOS */
-    padding: 0.75rem;
+    padding: 0.625rem 0.75rem;
   }
   
   .assistant-content {
     font-size: 0.875rem;
+    line-height: 1.6;
   }
   
   .assistant-card {
     border-radius: var(--radius-sm);
+  }
+
+  /* Better touch targets for mobile */
+  button {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Optimize message bubbles for mobile */
+  .bg-indigo-500,
+  .bg-gray-100 {
+    font-size: 0.875rem;
+  }
+
+  /* Improve spacing on mobile */
+  body {
+    font-size: 14px;
+  }
+
+  /* Better header spacing */
+  .app-header {
+    padding: 0.5rem 0.75rem !important;
+  }
+
+  /* Mobile sidebar optimization */
+  aside.sidebar-mobile {
+    width: 85vw !important;
+  }
+
+  @media (min-width: 480px) {
+    aside.sidebar-mobile {
+      width: 75vw !important;
+    }
+  }
+}
+
+/* Tablet optimizations */
+@media (min-width: 641px) and (max-width: 1023px) {
+  .app-input,
+  .app-select {
+    font-size: 15px;
+  }
+
+  .assistant-content {
+    font-size: 0.9375rem;
+  }
+
+}
+
+/* Large screen optimizations */
+@media (min-width: 1024px) {
+  /* Ensure sidebar transitions smoothly */
+  aside.sidebar-mobile {
+    position: sticky !important;
+  }
+
+  /* Main content adjusts to sidebar */
+  .min-h-screen.flex.flex-row {
+    flex-direction: row;
+  }
+}
+
+/* Small mobile devices (375px and below) */
+@media (max-width: 375px) {
+  .app-header h1 {
+    font-size: 1rem !important;
+  }
+
+  .assistant-card {
+    padding: 0.5rem !important;
+  }
+
+  .assistant-pill {
+    font-size: 0.7rem;
+    padding: 3px 8px;
+  }
+
+  /* More compact header */
+  .app-header {
+    padding: 0.375rem 0.5rem !important;
+  }
+
+  /* Smaller touch targets for very small screens */
+  button {
+    min-height: 40px;
+    min-width: 40px;
+  }
+
+  /* Very small font sizes */
+  body {
+    font-size: 13px;
+  }
+
+  .assistant-content {
+    font-size: 0.8125rem;
+    line-height: 1.5;
+  }
+
+  /* Compact weather card */
+  .assistant-stat {
+    padding: 0.25rem !important;
+    font-size: 0.75rem;
+  }
+
+  /* Smaller message bubbles */
+  .bg-indigo-500,
+  .bg-gray-100 {
+    font-size: 0.8125rem;
+    padding: 0.5rem 0.75rem;
+  }
+}
+
+/* Extra small mobile devices (360px and below) */
+@media (max-width: 360px) {
+  .app-header h1 {
+    font-size: 0.9rem !important;
+  }
+
+  /* Stack header elements vertically */
+  .app-header > div {
+    flex-direction: column !important;
+    gap: 0.5rem !important;
+  }
+
+  .app-header > div > div:first-child {
+    text-align: center !important;
+  }
+
+  /* Even more compact controls */
+  .flex.items-center.gap-2 {
+    gap: 0.25rem !important;
+  }
+
+  /* Very small inputs */
+  .app-input,
+  .app-select {
+    padding: 0.5rem 0.625rem !important;
+    font-size: 15px !important;
+  }
+
+  /* Compact weather card for tiny screens */
+  .assistant-card {
+    padding: 0.375rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  .assistant-stat {
+    padding: 0.125rem !important;
+    font-size: 0.6875rem;
+  }
+
+  /* Smaller temperature display */
+  .text-xl {
+    font-size: 1.125rem !important;
+  }
+
+  .text-2xl {
+    font-size: 1.25rem !important;
+  }
+
+  /* Compact sidebar */
+  .sidebar-mobile {
+    width: 85vw !important;
+  }
+
+  /* Smaller scroll button */
+  .fixed.bottom-28 {
+    bottom: 6rem !important;
+  }
+}
+
+/* Ultra small mobile devices (320px and below) */
+@media (max-width: 320px) {
+  .app-header h1 {
+    font-size: 0.85rem !important;
+  }
+
+  /* Minimal padding */
+  .app-header {
+    padding: 0.25rem 0.375rem !important;
+  }
+
+  /* Tiny touch targets */
+  button {
+    min-height: 36px;
+    min-width: 36px;
+  }
+
+  /* Very compact message bubbles */
+  .bg-indigo-500,
+  .bg-gray-100 {
+    padding: 0.375rem 0.625rem;
+    font-size: 0.75rem;
+  }
+
+  /* Minimal weather card */
+  .assistant-card {
+    padding: 0.25rem !important;
+  }
+
+  .assistant-pill {
+    font-size: 0.625rem;
+    padding: 2px 6px;
+  }
+
+  /* Tiny sidebar */
+  .sidebar-mobile {
+    width: 90vw !important;
+  }
+
+  /* Smaller hamburger button */
+  .fixed.left-3.top-3 {
+    left: 0.5rem !important;
+    top: 0.5rem !important;
+  }
+
+  /* Compact input form */
+  .fixed.bottom-0 {
+    padding: 0.25rem 0.5rem !important;
+  }
+
+  .flex.gap-2.items-stretch {
+    gap: 0.125rem !important;
+  }
+
+  /* Compact input form padding adjustments for small screens */
+  .fixed.bottom-28 {
+    bottom: 5.5rem !important;
+    right: 0.5rem !important;
   }
 }
 
@@ -593,6 +823,20 @@ button[aria-label="Scroll to latest message"] {
 *:focus-visible {
   outline: 2px solid var(--accent-primary);
   outline-offset: 2px;
+}
+
+/* Better tap targets for mobile */
+@media (hover: none) and (pointer: coarse) {
+  button,
+  a,
+  input,
+  select {
+    min-height: 44px;
+  }
+
+  button {
+    padding: 0.625rem 1rem;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -607,7 +851,19 @@ button[aria-label="Scroll to latest message"] {
 
 /* ========== SCROLLBAR STYLING ========== */
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 8px;
+}
+
+@media (max-width: 640px) {
+  ::-webkit-scrollbar {
+    width: 4px;
+  }
+}
+
+@media (max-width: 375px) {
+  ::-webkit-scrollbar {
+    width: 2px;
+  }
 }
 
 ::-webkit-scrollbar-track {

@@ -181,7 +181,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   const handleSelectChat = (chat: ChatRecord) => {
     onSelectChat(chat.messages);
-    if (window.innerWidth < 768) {
+    if (window.innerWidth < 1024) {
       setIsOpen(false);
     }
   };
@@ -231,7 +231,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       {/* Mobile Hamburger */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed left-4 top-4 z-50 md:hidden p-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700"
+        className="fixed left-3 top-3 z-50 lg:hidden p-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 shadow-lg transition-all duration-200"
         aria-label={t('showSidebarTooltip')}
         title={t('showSidebarTooltip')}
       >
@@ -243,23 +243,23 @@ export const Sidebar: React.FC<SidebarProps> = ({
       {/* Mobile Overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 z-30 md:hidden bg-black/50"
+          className="fixed inset-0 z-30 lg:hidden bg-black/60 backdrop-blur-sm transition-opacity duration-300"
           onClick={() => setIsOpen(false)}
         />
       )}
 
       {/* Sidebar */}
       <aside
-        className={`sticky top-0 z-40 h-screen bg-white dark:bg-[#0b1220] border-r border-gray-200 dark:border-[#243044] flex flex-col shadow-lg transition-all duration-300 ${
+        className={`fixed lg:sticky top-0 z-40 h-screen bg-white dark:bg-[#0b1220] border-r border-gray-200 dark:border-[#243044] flex flex-col shadow-xl transition-all duration-300 lg:shadow-lg sidebar-mobile ${
           isOpen 
-            ? 'w-64 translate-x-0' 
-            : 'w-64 -translate-x-full md:w-20 md:translate-x-0'
+            ? 'w-72 sm:w-80 translate-x-0' 
+            : 'w-72 sm:w-80 -translate-x-full lg:w-20 lg:translate-x-0'
         }`}
       >
         {/* Close Mobile Button */}
         <button
           onClick={() => setIsOpen(false)}
-          className="md:hidden absolute top-4 right-4 p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+          className="lg:hidden absolute top-3 right-3 p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 rounded-lg hover:bg-gray-100 dark:hover:bg-[#1a2332] transition-colors duration-200"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -270,7 +270,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         {!isOpen && (
           <button
             onClick={() => setIsOpen(true)}
-            className="hidden md:flex absolute top-4 left-1/2 -translate-x-1/2 p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#1a2332] rounded-lg"
+            className="hidden lg:flex absolute top-4 left-1/2 -translate-x-1/2 p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#1a2332] rounded-lg transition-colors duration-200"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -280,17 +280,17 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
         {/* Top Menu (Hidden when collapsed on desktop) */}
         {isOpen && (
-          <div className="p-4 space-y-3 border-b border-gray-200 dark:border-[#243044]">
+          <div className="p-3 sm:p-4 space-y-3 border-b border-gray-200 dark:border-[#243044]">
             {/* Logo/Brand */}
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between mb-3 sm:mb-4">
               <h1 className="text-lg font-bold text-indigo-700 dark:text-indigo-400">AeroSense 🌤️</h1>
               <button
                 onClick={() => setIsOpen(false)}
-                className="hidden md:flex p-1 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#1a2332] rounded"
+                className="hidden lg:flex p-1 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#1a2332] rounded transition-colors duration-200"
                 title={t('collapse')}
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7 7m0 0l-7-7m7 7V3" />
                 </svg>
               </button>
             </div>
