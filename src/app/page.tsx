@@ -862,22 +862,29 @@ const AppContent: React.FC = () => {
                   disabled={loading}
                 />
 
-                <button
-                  type="button"
-                  onClick={startListening}
-                  disabled={!mounted || loading || !isSupported}
-                  aria-hidden={!mounted || !isSupported}
-                  className={`p-1.5 sm:p-2 md:p-2.5 lg:p-3 rounded-lg transition duration-150 ease-in-out shadow-md flex-shrink-0 ${
-                    mounted && isSupported
-                      ? (isListening ? 'bg-red-500 text-white animate-pulse' : 'bg-indigo-500 hover:bg-indigo-600 text-white')
-                      : 'bg-transparent text-transparent pointer-events-none'
-                  } ${(!mounted || loading || !isSupported) ? 'disabled:bg-gray-400' : ''}`}
-                  title={mounted && isSupported ? (isListening ? t('stopVoice') : t('startVoice')) : ''}
-                >
-                  <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M10 8c1.1 0 2-.9 2-2V3a2 2 0 10-4 0v3c0 1.1.9 2 2 2zM10 18c3.31 0 6-2.69 6-6h-2c0 2.21-1.79 4-4 4s-4-1.79-4-4H4c0 3.31 2.69 6 6 6zM15 9H5a1 1 0 000 2h10a1 1 0 000-2z" />
-                  </svg>
-                </button>
+                <div className="flex flex-col items-center gap-1">
+                  <button
+                    type="button"
+                    onClick={startListening}
+                    disabled={!mounted || loading || !isSupported}
+                    aria-hidden={!mounted || !isSupported}
+                    className={`p-1.5 sm:p-2 md:p-2.5 lg:p-3 rounded-lg transition duration-150 ease-in-out shadow-md flex-shrink-0 ${
+                      mounted && isSupported
+                        ? (isListening ? 'bg-red-500 text-white animate-pulse' : 'bg-indigo-500 hover:bg-indigo-600 text-white')
+                        : 'bg-transparent text-transparent pointer-events-none'
+                    } ${(!mounted || loading || !isSupported) ? 'disabled:bg-gray-400' : ''}`}
+                    title={mounted && isSupported ? (isListening ? t('stopVoice') : t('startVoice')) : ''}
+                  >
+                    <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M10 8c1.1 0 2-.9 2-2V3a2 2 0 10-4 0v3c0 1.1.9 2 2 2zM10 18c3.31 0 6-2.69 6-6h-2c0 2.21-1.79 4-4 4s-4-1.79-4-4H4c0 3.31 2.69 6 6 6zM15 9H5a1 1 0 000 2h10a1 1 0 000-2z" />
+                    </svg>
+                  </button>
+                  {mounted && isSupported && (
+                    <span className="text-[8px] sm:text-[9px] text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+                      {language === 'ja-JP' ? '日本語' : 'EN'}
+                    </span>
+                  )}
+                </div>
 
                 <button
                   type="submit"

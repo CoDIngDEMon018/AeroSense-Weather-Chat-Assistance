@@ -195,6 +195,43 @@ form button {
   transition: padding var(--transition-base);
 }
 
+/* Message animations */
+@keyframes message-slide-in {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.space-y-4 > div {
+  animation: message-slide-in 0.3s ease-out;
+}
+
+/* Message hover effects */
+.space-y-4 > div > div {
+  transition: all var(--transition-fast);
+}
+
+.space-y-4 > div:hover > div {
+  transform: translateY(-1px);
+}
+
+.bg-indigo-500:hover {
+  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.35) !important;
+}
+
+.bg-gray-100:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+}
+
+.dark .bg-gray-100:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4) !important;
+}
+
 /* Chat container styling */
 main > div {
   background: linear-gradient(135deg, #ffffff 0%, #fafbfc 50%, #f8fafc 100%);
@@ -209,14 +246,15 @@ main > div {
 /* Message bubbles */
 .bg-indigo-500 {
   background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%) !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 12px rgba(99, 102, 241, 0.25);
   color: #ffffff;
+  border: none !important;
 }
 
 .bg-gray-100 {
-  background: #f1f5f9 !important;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%) !important;
   border: 1px solid #e2e8f0 !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   color: #1e293b !important;
 }
 
@@ -233,9 +271,10 @@ main > div {
 }
 
 .dark .bg-gray-100 {
-  background: #1e293b !important;
-  border-color: #334155 !important;
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%) !important;
+  border-color: #475569 !important;
   color: #f1f5f9 !important;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
 }
 
 .dark .text-gray-800 {
@@ -320,16 +359,20 @@ main > div {
 }
 
 .bg-blue-50 {
-  background: #eff6ff !important;
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%) !important;
   color: #0c4a6e !important;
 }
 
 .border-blue-200 {
-  border-color: #a5d8ff !important;
+  border-color: #bfdbfe !important;
 }
 
 .text-blue-700 {
   color: #0c4a6e !important;
+}
+
+.text-blue-800 {
+  color: #1e40af !important;
 }
 
 .dark .bg-blue-50 {
@@ -577,7 +620,7 @@ button[aria-label="Scroll to latest message"] {
   .app-input,
   .app-select {
     font-size: 16px; /* Prevents zoom on iOS */
-    padding: 0.625rem 0.75rem;
+    padding: 0.625rem 0.875rem;
   }
   
   .assistant-content {
@@ -620,32 +663,6 @@ button[aria-label="Scroll to latest message"] {
     aside.sidebar-mobile {
       width: 75vw !important;
     }
-  }
-}
-
-/* Tablet optimizations */
-@media (min-width: 641px) and (max-width: 1023px) {
-  .app-input,
-  .app-select {
-    font-size: 15px;
-  }
-
-  .assistant-content {
-    font-size: 0.9375rem;
-  }
-
-}
-
-/* Large screen optimizations */
-@media (min-width: 1024px) {
-  /* Ensure sidebar transitions smoothly */
-  aside.sidebar-mobile {
-    position: sticky !important;
-  }
-
-  /* Main content adjusts to sidebar */
-  .min-h-screen.flex.flex-row {
-    flex-direction: row;
   }
 }
 
@@ -698,127 +715,6 @@ button[aria-label="Scroll to latest message"] {
     padding: 0.5rem 0.75rem;
   }
 }
-
-/* Extra small mobile devices (360px and below) */
-@media (max-width: 360px) {
-  .app-header h1 {
-    font-size: 0.9rem !important;
-  }
-
-  /* Stack header elements vertically */
-  .app-header > div {
-    flex-direction: column !important;
-    gap: 0.5rem !important;
-  }
-
-  .app-header > div > div:first-child {
-    text-align: center !important;
-  }
-
-  /* Even more compact controls */
-  .flex.items-center.gap-2 {
-    gap: 0.25rem !important;
-  }
-
-  /* Very small inputs */
-  .app-input,
-  .app-select {
-    padding: 0.5rem 0.625rem !important;
-    font-size: 15px !important;
-  }
-
-  /* Compact weather card for tiny screens */
-  .assistant-card {
-    padding: 0.375rem !important;
-    margin-bottom: 0.5rem !important;
-  }
-
-  .assistant-stat {
-    padding: 0.125rem !important;
-    font-size: 0.6875rem;
-  }
-
-  /* Smaller temperature display */
-  .text-xl {
-    font-size: 1.125rem !important;
-  }
-
-  .text-2xl {
-    font-size: 1.25rem !important;
-  }
-
-  /* Compact sidebar */
-  .sidebar-mobile {
-    width: 85vw !important;
-  }
-
-  /* Smaller scroll button */
-  .fixed.bottom-28 {
-    bottom: 6rem !important;
-  }
-}
-
-/* Ultra small mobile devices (320px and below) */
-@media (max-width: 320px) {
-  .app-header h1 {
-    font-size: 0.85rem !important;
-  }
-
-  /* Minimal padding */
-  .app-header {
-    padding: 0.25rem 0.375rem !important;
-  }
-
-  /* Tiny touch targets */
-  button {
-    min-height: 36px;
-    min-width: 36px;
-  }
-
-  /* Very compact message bubbles */
-  .bg-indigo-500,
-  .bg-gray-100 {
-    padding: 0.375rem 0.625rem;
-    font-size: 0.75rem;
-  }
-
-  /* Minimal weather card */
-  .assistant-card {
-    padding: 0.25rem !important;
-  }
-
-  .assistant-pill {
-    font-size: 0.625rem;
-    padding: 2px 6px;
-  }
-
-  /* Tiny sidebar */
-  .sidebar-mobile {
-    width: 90vw !important;
-  }
-
-  /* Smaller hamburger button */
-  .fixed.left-3.top-3 {
-    left: 0.5rem !important;
-    top: 0.5rem !important;
-  }
-
-  /* Compact input form */
-  .fixed.bottom-0 {
-    padding: 0.25rem 0.5rem !important;
-  }
-
-  .flex.gap-2.items-stretch {
-    gap: 0.125rem !important;
-  }
-
-  /* Compact input form padding adjustments for small screens */
-  .fixed.bottom-28 {
-    bottom: 5.5rem !important;
-    right: 0.5rem !important;
-  }
-}
-
 /* ========== ACCESSIBILITY ========== */
 *:focus-visible {
   outline: 2px solid var(--accent-primary);
@@ -847,57 +743,4 @@ button[aria-label="Scroll to latest message"] {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
-}
-
-/* ========== SCROLLBAR STYLING ========== */
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-@media (max-width: 640px) {
-  ::-webkit-scrollbar {
-    width: 4px;
-  }
-}
-
-@media (max-width: 375px) {
-  ::-webkit-scrollbar {
-    width: 2px;
-  }
-}
-
-::-webkit-scrollbar-track {
-  background: var(--background);
-}
-
-::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 5px;
-  transition: background var(--transition-fast);
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
-}
-
-.dark ::-webkit-scrollbar-thumb {
-  background: #475569;
-}
-
-.dark ::-webkit-scrollbar-thumb:hover {
-  background: #64748b;
-}
-
-/* ========== UTILITY CLASSES ========== */
-.backdrop-blur {
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-}
-
-.shadow-soft {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04);
-}
-
-.dark .shadow-soft {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3), 0 1px 3px rgba(0, 0, 0, 0.2);
 }
