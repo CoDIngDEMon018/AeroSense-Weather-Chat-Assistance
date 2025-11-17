@@ -816,12 +816,12 @@ const AppContent: React.FC = () => {
       </header>
 
       {/* Chat Messages Container */}
-      <main className="flex-1 max-w-4xl mx-auto w-full p-2 sm:p-4 pb-40 flex flex-col">
+      <main className="flex-1 max-w-4xl mx-auto w-full p-2 sm:p-4 flex flex-col">
         <div 
           ref={chatContainerRef}
-          className="flex-1 bg-white dark:bg-transparent rounded-lg shadow-lg lg:shadow-sm p-2 sm:p-3 md:p-4 mb-4 pb-28"
+          className="flex-1 bg-white dark:bg-transparent rounded-lg shadow-lg lg:shadow-sm p-2 sm:p-3 md:p-4 mb-4 overflow-y-auto"
         >
-          <div className="space-y-4">
+          <div className="space-y-4 pb-[150px]">
             {messages.map((message) => (
               <MessageItem key={message.id} message={message} />
             ))}
