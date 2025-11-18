@@ -94,6 +94,156 @@ const formatAssistantHtml = (text: string): { __html: string } => {
   return { __html: html };
 };
 
+// Props interface for MessageItem
+interface MessageItemProps {
+  message: ChatMessage;
+  getMessageText: (m: ChatMessage) => string;
+  setMessages: React.Dispatch<React.SetStateAction<ChatMessage[]>>;
+  translatingRef: React.MutableRefObject<Set<string>>;
+  translatingCountRef: React.MutableRefObject<number>;
+  MAX_CONCURRENT_TRANSLATIONS: number;
+  mounted: boolean;
+  language: string;
+  t: (key: string) => string;
+}
+
+// MessageItem component moved outside AppContent to prevent recreation
+const MessageItem: React.FC<MessageItemProps> = React.memo(({
+  message,
+  getMessageText,
+  setMessages,
+  translatingRef,
+  translatingCountRef,
+  MAX_CONCURRENT_TRANSLATIONS,
+  mounted,
+  language,
+  t
+}) => {
+  const [localTranslating, setLocalTranslating] = React.useState(false);
+
+  const ensureTranslation = React.useCallback(async () => {
+    if (!message.original) return;
+    if (message.translations && message.translations[language]) return;
+    if (translatingRef.current.has(message.id)) return;
+
+    // Simple concurrency limiter
+    const startWhenAllowed = async () => {
+      while (translatingCountRef.current >= MAX_CONCURRENT_TRANSLATIONS) {
+        await new Promise(r => setTimeout(r, 150));
+      }
+      translatingCountRef.current++;
+      translatingRef.current.add(message.id);
+      setLocalTranslating(true);
+      try {
+        const translated = await translateText(message.original, language);
+        setMessages(prev => prev.map(m => m.id === message.id ? { ...m, translations: { ...(m.translations || {}), [language]: translated } } : m));
+      } catch (err) {
+        console.error('Translation failed for message', message.id, err);
+      } finally {
+        translatingCountRef.current--;
+        translatingRef.current.delete(message.id);
+        setLocalTranslating(false);
+      }
+    };
+
+    startWhenAllowed();
+  }, [message.id, message.original, message.translations, language, setMessages, translatingRef, translatingCountRef, MAX_CONCURRENT_TRANSLATIONS]);
+
+  React.useEffect(() => {
+    // Only translate assistant/system messages by default (user messages keep original)
+    if (message.type === 'assistant' || message.type === 'system') {
+      if (!message.translations || !message.translations[language]) {
+        ensureTranslation();
+      }
+    }
+  }, [language, message.id, ensureTranslation]);
+
+  const text = getMessageText(message);
+
+  const getWeatherIcon = (condition: string) => {
+    const conditionLower = condition.toLowerCase();
+    if (conditionLower.includes('clear')) return '☀️';
+    if (conditionLower.includes('cloud')) return '☁️';
+    if (conditionLower.includes('rain') || conditionLower.includes('drizzle')) return '🌧️';
+    if (conditionLower.includes('thunder')) return '⛈️';
+    if (conditionLower.includes('snow')) return '🌨️';
+    return '🌀';
+  };
+
+  return (
+    <div className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}>
+      <div className={`max-w-[90%] sm:max-w-[85%] md:max-w-md px-3 sm:px-4 py-2 rounded-lg ${
+        message.type === 'user'
+          ? 'bg-indigo-500 text-white'
+          : message.type === 'assistant'
+          ? 'bg-gray-100 text-gray-800'
+          : 'bg-blue-50 text-blue-800 text-center mx-auto'
+      }`}>
+        {message.type === 'assistant' && message.weatherData && (
+          <div className="assistant-card mb-3 p-2 sm:p-3 bg-blue-50 border border-blue-200">
+            <div className="flex items-center justify-between flex-wrap sm:flex-nowrap gap-2">
+              <div className="flex items-center gap-2 text-xs sm:text-sm text-blue-700">
+                <span className="text-lg sm:text-xl">{getWeatherIcon(message.weatherData.condition)}</span>
+                <div className="font-semibold">{message.weatherData.city}</div>
+              </div>
+              <div className="text-xl sm:text-2xl font-bold text-indigo-700">{Math.round(message.weatherData.temp)}°C</div>
+            </div>
+            <div className="mt-2 flex items-center gap-1.5 sm:gap-2 flex-wrap">
+              <span className="assistant-pill bg-yellow-100 text-yellow-800 capitalize text-xs sm:text-sm">{message.weatherData.description}</span>
+              <span className="assistant-pill bg-indigo-100 text-indigo-800 text-xs sm:text-sm">{t('feels')} {Math.round(message.weatherData.feelsLike)}°C</span>
+            </div>
+            <div className="mt-3 grid grid-cols-3 gap-1.5 sm:gap-2 text-xs">
+              <div className="assistant-stat bg-white/60 dark:bg-white/5 p-1.5 sm:p-2">
+                <div className="text-gray-600 text-[10px] sm:text-xs">{t('humidity')}</div>
+                <div className="font-semibold text-xs sm:text-sm">{message.weatherData.humidity}%</div>
+              </div>
+              <div className="assistant-stat bg-white/60 dark:bg-white/5 p-1.5 sm:p-2">
+                <div className="text-gray-600 text-[10px] sm:text-xs">{t('windSpeed')}</div>
+                <div className="font-semibold text-xs sm:text-sm">{message.weatherData.windSpeed} m/s</div>
+              </div>
+              <div className="assistant-stat bg-white/60 dark:bg-white/5 p-1.5 sm:p-2">
+                <div className="text-gray-600 text-[10px] sm:text-xs">{t('visibility')}</div>
+                <div className="font-semibold text-xs sm:text-sm">{message.weatherData.visibilityKm != null ? `${message.weatherData.visibilityKm}km` : '—'}</div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {message.type === 'assistant' ? (
+          <div className="assistant-content" dangerouslySetInnerHTML={formatAssistantHtml(text || (localTranslating ? t('translating') : message.original))} />
+        ) : (
+          <div className="whitespace-pre-wrap">{text || (localTranslating ? t('translating') : message.original)}</div>
+        )}
+
+        {message.sources && message.sources.length > 0 && (
+          <div className="mt-2 pt-2 border-t border-gray-200">
+            <p className="text-xs text-gray-500 mb-1">{t('sources')}</p>
+            <div className="space-y-1">
+              {message.sources.slice(0, 2).map((source, index) => (
+                <a
+                  key={index}
+                  href={source.uri}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block text-xs text-blue-600 hover:text-blue-800 hover:underline truncate"
+                >
+                  {source.title}
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <div className="text-xs opacity-60 mt-1">
+          {mounted ? message.timestamp.toLocaleTimeString() : '--:--'}
+        </div>
+      </div>
+    </div>
+  );
+});
+
+MessageItem.displayName = 'MessageItem';
+
 // Utility Icons
 const LoadingSpinner: React.FC<{ text?: string }> = ({ text }) => (
   <div className="flex justify-center items-center p-2">
@@ -129,9 +279,9 @@ const AppContent: React.FC = () => {
   const chatContainerRef = useRef<HTMLDivElement>(null);
   // translator `t` is provided by LanguageContext
 
-  const getMessageText = (m: ChatMessage) => {
+  const getMessageText = useCallback((m: ChatMessage) => {
     return m.translations?.[language] ?? m.original ?? '';
-  };
+  }, [language]);
 
   // update initial system message when language changes
   useEffect(() => {
@@ -143,30 +293,38 @@ const AppContent: React.FC = () => {
     // Optimized batch translation for existing messages: translate missing messages in batches
     (async () => {
       try {
-        const toTranslate = messages.filter(m => m.original && (!m.translations || !m.translations[language]) && m.type !== 'user');
-        if (toTranslate.length === 0) return;
-        const BATCH = 8;
-        for (let i = 0; i < toTranslate.length; i += BATCH) {
-          const batch = toTranslate.slice(i, i + BATCH);
-          const texts = batch.map(b => b.original);
-          try {
-            const results = await batchTranslate(texts, language);
-            setMessages(prev => prev.map(m => {
-              const idx = batch.findIndex(b => b.id === m.id);
-              if (idx !== -1) {
-                return { ...m, translations: { ...(m.translations || {}), [language]: results[idx] } };
+        setMessages(currentMessages => {
+          const toTranslate = currentMessages.filter(m => m.original && (!m.translations || !m.translations[language]) && m.type !== 'user');
+          if (toTranslate.length === 0) return currentMessages;
+          
+          // Process translations asynchronously without causing re-renders
+          (async () => {
+            const BATCH = 8;
+            for (let i = 0; i < toTranslate.length; i += BATCH) {
+              const batch = toTranslate.slice(i, i + BATCH);
+              const texts = batch.map(b => b.original);
+              try {
+                const results = await batchTranslate(texts, language);
+                setMessages(prev => prev.map(m => {
+                  const idx = batch.findIndex(b => b.id === m.id);
+                  if (idx !== -1) {
+                    return { ...m, translations: { ...(m.translations || {}), [language]: results[idx] } };
+                  }
+                  return m;
+                }));
+              } catch (err) {
+                console.error('Batch translate failed', err);
               }
-              return m;
-            }));
-          } catch (err) {
-            console.error('Batch translate failed', err);
-          }
-        }
+            }
+          })();
+          
+          return currentMessages;
+        });
       } catch (e) {
         console.error('Batch translation flow error', e);
       }
     })();
-  }, [language]);
+  }, [language, t]);
   // Language options (display labels localized to selected UI language)
   const languageOptions = [
     { value: 'en-US', label: { 'en-US': 'English', 'ja-JP': '英語' } },
@@ -558,133 +716,6 @@ const AppContent: React.FC = () => {
   const translatingCountRef = useRef<number>(0);
   const MAX_CONCURRENT_TRANSLATIONS = 3;
 
-  const MessageItem: React.FC<{ message: ChatMessage }> = ({ message }) => {
-    const [localTranslating, setLocalTranslating] = React.useState(false);
-
-    const ensureTranslation = React.useCallback(async () => {
-      if (!message.original) return;
-      if (message.translations && message.translations[language]) return;
-      if (translatingRef.current.has(message.id)) return;
-
-      // Simple concurrency limiter
-      const startWhenAllowed = async () => {
-        while (translatingCountRef.current >= MAX_CONCURRENT_TRANSLATIONS) {
-          await new Promise(r => setTimeout(r, 150));
-        }
-        translatingCountRef.current++;
-        translatingRef.current.add(message.id);
-        setLocalTranslating(true);
-        try {
-          const translated = await translateText(message.original, language);
-          setMessages(prev => prev.map(m => m.id === message.id ? { ...m, translations: { ...(m.translations || {}), [language]: translated } } : m));
-        } catch (err) {
-          console.error('Translation failed for message', message.id, err);
-        } finally {
-          translatingCountRef.current--;
-          translatingRef.current.delete(message.id);
-          setLocalTranslating(false);
-        }
-      };
-
-      startWhenAllowed();
-    }, [message.id, message.original, message.translations, language]);
-
-    React.useEffect(() => {
-      // Only translate assistant/system messages by default (user messages keep original)
-      if (message.type === 'assistant' || message.type === 'system') {
-        if (!message.translations || !message.translations[language]) {
-          ensureTranslation();
-        }
-      }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [language, message.id]);
-
-    const text = getMessageText(message);
-
-    return (
-      <div className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}>
-        <div className={`max-w-[90%] sm:max-w-[85%] md:max-w-md px-3 sm:px-4 py-2 rounded-lg ${
-          message.type === 'user'
-            ? 'bg-indigo-500 text-white'
-            : message.type === 'assistant'
-            ? 'bg-gray-100 text-gray-800'
-            : 'bg-blue-50 text-blue-800 text-center mx-auto'
-        }`}>
-          {message.type === 'assistant' && message.weatherData && (
-            <div className="assistant-card mb-3 p-2 sm:p-3 bg-blue-50 border border-blue-200">
-              <div className="flex items-center justify-between flex-wrap sm:flex-nowrap gap-2">
-                <div className="flex items-center gap-2 text-xs sm:text-sm text-blue-700">
-                  <span className="text-lg sm:text-xl">{getWeatherIcon(message.weatherData.condition)}</span>
-                  <div className="font-semibold">{message.weatherData.city}</div>
-                </div>
-                <div className="text-xl sm:text-2xl font-bold text-indigo-700">{Math.round(message.weatherData.temp)}°C</div>
-              </div>
-              <div className="mt-2 flex items-center gap-1.5 sm:gap-2 flex-wrap">
-                <span className="assistant-pill bg-yellow-100 text-yellow-800 capitalize text-xs sm:text-sm">{message.weatherData.description}</span>
-                <span className="assistant-pill bg-indigo-100 text-indigo-800 text-xs sm:text-sm">{t('feels')} {Math.round(message.weatherData.feelsLike)}°C</span>
-              </div>
-              <div className="mt-3 grid grid-cols-3 gap-1.5 sm:gap-2 text-xs">
-                <div className="assistant-stat bg-white/60 dark:bg-white/5 p-1.5 sm:p-2">
-                  <div className="text-gray-600 text-[10px] sm:text-xs">{t('humidity')}</div>
-                  <div className="font-semibold text-xs sm:text-sm">{message.weatherData.humidity}%</div>
-                </div>
-                <div className="assistant-stat bg-white/60 dark:bg-white/5 p-1.5 sm:p-2">
-                  <div className="text-gray-600 text-[10px] sm:text-xs">{t('windSpeed')}</div>
-                  <div className="font-semibold text-xs sm:text-sm">{message.weatherData.windSpeed} m/s</div>
-                </div>
-                <div className="assistant-stat bg-white/60 dark:bg-white/5 p-1.5 sm:p-2">
-                  <div className="text-gray-600 text-[10px] sm:text-xs">{t('visibility')}</div>
-                  <div className="font-semibold text-xs sm:text-sm">{message.weatherData.visibilityKm != null ? `${message.weatherData.visibilityKm}km` : '—'}</div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {message.type === 'assistant' ? (
-            <div className="assistant-content" dangerouslySetInnerHTML={formatAssistantHtml(text || (localTranslating ? t('translating') : message.original))} />
-          ) : (
-            <div className="whitespace-pre-wrap">{text || (localTranslating ? t('translating') : message.original)}</div>
-          )}
-
-          {message.sources && message.sources.length > 0 && (
-            <div className="mt-2 pt-2 border-t border-gray-200">
-              <p className="text-xs text-gray-500 mb-1">{t('sources')}</p>
-              <div className="space-y-1">
-                {message.sources.slice(0, 2).map((source, index) => (
-                  <a
-                    key={index}
-                    href={source.uri}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block text-xs text-blue-600 hover:text-blue-800 hover:underline truncate"
-                  >
-                    {source.title}
-                  </a>
-                ))}
-              </div>
-            </div>
-          )}
-
-          <div className="text-xs opacity-60 mt-1">
-            {mounted ? message.timestamp.toLocaleTimeString() : '--:--'}
-          </div>
-        </div>
-      </div>
-    );
-  };
-
- 
-  const getWeatherIcon = (condition: string) => {
-    const conditionLower = condition.toLowerCase();
-    if (conditionLower.includes('clear')) return '☀️';
-    if (conditionLower.includes('cloud')) return '☁️';
-    if (conditionLower.includes('rain') || conditionLower.includes('drizzle')) return '🌧️';
-    if (conditionLower.includes('thunder')) return '⛈️';
-    if (conditionLower.includes('snow')) return '🌨️';
-    return '🌀';
-  };
-
-
 
   const clearChat = () => {
     setMessages([
@@ -823,7 +854,18 @@ const AppContent: React.FC = () => {
         >
           <div className="space-y-4 pb-[150px]">
             {messages.map((message) => (
-              <MessageItem key={message.id} message={message} />
+              <MessageItem
+                key={message.id}
+                message={message}
+                getMessageText={getMessageText}
+                setMessages={setMessages}
+                translatingRef={translatingRef}
+                translatingCountRef={translatingCountRef}
+                MAX_CONCURRENT_TRANSLATIONS={MAX_CONCURRENT_TRANSLATIONS}
+                mounted={mounted}
+                language={language}
+                t={t}
+              />
             ))}
             
             {loading && (
