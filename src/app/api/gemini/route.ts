@@ -4,7 +4,8 @@ import { NextRequest, NextResponse } from 'next/server';
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY; 
 
 
-const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${GEMINI_API_KEY}`;
+const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`;
+
 
 export async function POST(req: NextRequest) {
     if (!GEMINI_API_KEY) {
